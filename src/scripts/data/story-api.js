@@ -45,6 +45,23 @@ class StoryApi {
     if (!response.ok) throw new Error(responseJson.message);
     return responseJson;
   }
+  /**
+   * Mengambil detail cerita spesifik berdasarkan ID
+   * @param {string} id - ID unik cerita
+   * @returns {Promise<Object>} Objek detail cerita
+   */
+  static async getStoryDetail(id) {
+    const token = Auth.getToken();
+    if (!token) throw new Error("Akses ditolak. Silakan login kembali.");
+
+    const response = await fetch(`${this.ENDPOINT.STORIES}/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const responseJson = await response.json();
+    if (!response.ok) throw new Error(responseJson.message);
+    return responseJson.story;
+  }
 }
 
 export default StoryApi;

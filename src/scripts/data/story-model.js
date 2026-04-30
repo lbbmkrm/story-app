@@ -12,6 +12,10 @@ class StoryModel {
   static async addStory(formData) {
     return await StoryApi.addStory(formData);
   }
+
+  static async getStoryDetail(id) {
+    return await StoryApi.getStoryDetail(id);
+  }
 }
 
 export default StoryModel;

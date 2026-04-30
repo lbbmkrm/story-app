@@ -19,27 +19,32 @@ class HomePage {
   async render() {
     return `
       <div class="home-container">
-        <header class="page-header" >
-          <h1>Dashboard Story</h1>
-        </header>
         <div class="home-content">
-          <!-- Area Visualisasi Peta -->
+          <!-- Area Peta di Atas -->
           <section class="map-section" aria-label="Peta Lokasi Cerita">
-            <h2 id="mapTitle">Lokasi Cerita</h2>
-            <div id="map" class="map-container" role="application" aria-labelledby="mapTitle"></div>
+            <div id="map" class="map-container" role="application" aria-label="Peta Interaktif Cerita"></div>
           </section>
 
-          <!-- Area Daftar Konten -->
-          <section class="stories-section" aria-label="Daftar Cerita Terbaru">
-            <div class="stories-header">
-              <h2>Cerita Terbaru</h2>
-              <a href="#/add" class="btn btn-primary" aria-label="Tambah Cerita Baru">+ Tambah Cerita</a>
-            </div>
-            <div id="storiesContainer" class="stories-list" role="region" aria-live="polite">
-              <p>Memuat data cerita...</p>
-            </div>
-            <div id="errorMessage" class="error-message" role="alert" aria-live="polite" style="display: none;"></div>
-          </section>
+          <!-- Area Konten di Bawah -->
+          <div class="container">
+            <section class="stories-section" aria-label="Daftar Cerita Terbaru">
+              <header class="stories-header">
+                <h1>Daftar Cerita Terbaru</h1>
+                <p>Jelajahi momen-momen menarik dari seluruh penjuru dunia</p>
+                <div style="margin-top: 24px;">
+                  <a href="#/add" class="btn btn-primary btn-lg" aria-label="Bagikan Cerita Baru">
+                    ✨ Bagikan Cerita Anda
+                  </a>
+                </div>
+              </header>
+              
+              <div id="storiesContainer" class="stories-list" role="region" aria-live="polite">
+                <div id="loadingIndicator">Memuat data cerita...</div>
+              </div>
+              
+              <div id="errorMessage" class="error-message" role="alert" aria-live="polite" style="display: none; margin: 24px 0;"></div>
+            </section>
+          </div>
         </div>
       </div>
     `;
@@ -72,17 +77,24 @@ class HomePage {
       .map(
         (story) => `
           <article class="story-card" data-story-id="${story.id}" tabindex="0" role="button" aria-label="Cerita dari ${story.name}">
-            <img 
-              src="${story.photoUrl}" 
-              alt="Foto cerita ${story.name}"
-              class="story-image"
-              loading="lazy"
-            />
+            <div class="story-image-wrapper">
+              <img 
+                src="${story.photoUrl}" 
+                alt="Foto cerita ${story.name}"
+                class="story-image"
+                loading="lazy"
+              />
+            </div>
             <div class="story-content">
               <h3>${story.name}</h3>
               <p class="story-description">${story.description}</p>
-              <p class="story-location">📍 ${story.lat?.toFixed(2)}, ${story.lon?.toFixed(2)}</p>
-              <p class="story-date">${formatDate(story.createdAt)}</p>
+              <div class="story-meta">
+                <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : 'Lokasi tidak tersedia'}</span>
+                <span class="story-date">${formatDate(story.createdAt)}</span>
+              </div>
+              <div class="story-actions">
+                <button class="btn-focus-map" data-id="${story.id}" title="Lihat di Peta" aria-label="Lihat lokasi di peta">📍</button>
+              </div>
             </div>
           </article>
         `,
@@ -94,14 +106,22 @@ class HomePage {
       const card = document.querySelector(`[data-story-id="${story.id}"]`);
       if (card) {
         card.addEventListener("click", () => {
-          this.#presenter.onStorySelected(story.id);
+          window.location.hash = `#/stories/${story.id}`;
         });
+
+        const focusBtn = document.querySelector(`.btn-focus-map[data-id="${story.id}"]`);
+        if (focusBtn) {
+          focusBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Mencegah navigasi ke detail
+            this.#presenter.onStorySelected(story.id);
+          });
+        }
 
         // Dukungan aksesibilitas navigasi keyboard
         card.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            this.#presenter.onStorySelected(story.id);
+            window.location.hash = `#/stories/${story.id}`;
           }
         });
       }
@@ -122,7 +142,7 @@ class HomePage {
     }
 
     try {
-      this.#map = L.map(mapContainer).setView([-2.5, 112.0], 4);
+      this.#map = L.map(mapContainer).setView([-2.5489, 118.0149], 5);
     } catch (error) {
       console.warn("Leaflet init warning:", error);
     }
