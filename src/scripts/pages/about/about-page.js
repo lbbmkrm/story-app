@@ -1,4 +1,14 @@
+import AboutPresenter from "./about-presenter";
+
 export default class AboutPage {
+  #presenter;
+
+  constructor() {
+    this.#presenter = new AboutPresenter({
+      view: this,
+    });
+  }
+
   async render() {
     return `
       <div class="container" style="padding-block: 40px;">

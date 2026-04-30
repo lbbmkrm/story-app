@@ -1,4 +1,4 @@
-import StoryApi from "./api";
+import StoryApi from "./story-api";
 
 /**
  * StoryModel menangani logika bisnis terkait pengelolaan cerita.

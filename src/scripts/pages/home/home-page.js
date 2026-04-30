@@ -1,6 +1,7 @@
 import HomePresenter from "./home-presenter";
 import StoryModel from "../../data/story-model";
 import { formatDate } from "../../utils";
+import AuthModel from "../../data/auth-model";
 
 class HomePage {
   #presenter;
@@ -46,8 +47,7 @@ class HomePage {
 
   async afterRender() {
     // Validasi sesi pengguna sebelum memuat konten
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
+    if (!AuthModel.isUserLoggedIn()) {
       window.location.hash = "#/login";
       return;
     }

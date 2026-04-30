@@ -1,9 +1,4 @@
-/**
- * Utility: Check if user is logged in
- */
-export function isUserLoggedIn() {
-  return !!localStorage.getItem("authToken");
-}
+
 
 /**
  * Utility: Format tanggal (Locale Indonesia)
