@@ -18,65 +18,70 @@ export default class AddPage {
 
   async render() {
     return `
-      <div class="container" style="padding-block: 32px;">
-        <div class="auth-card" style="max-width: 800px; margin: 0 auto;">
-          <section aria-labelledby="addTitle">
-            <h1 id="addTitle">Bagikan Cerita</h1>
-            <p class="auth-subtitle">Bagikan momen dan lokasimu sekarang</p>
+      <div class="add-story-container">
+        <div class="container">
+          <div class="add-card">
+            <nav class="breadcrumb" style="margin-bottom: 24px;">
+              <a href="#/" class="back-link">← Kembali ke Beranda</a>
+            </nav>
 
-            <form id="addStoryForm" class="auth-form" aria-label="Form Tambah Cerita">
-              <div class="form-group">
-                <label for="description">Deskripsi</label>
-                <textarea 
-                  id="description" 
-                  name="description" 
-                  required 
-                  aria-required="true"
-                  placeholder="Apa yang sedang terjadi?" 
-                  style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 8px; min-height: 100px; font-family: inherit;"
-                ></textarea>
-              </div>
-
-              <!-- Media Section (Kamera & Upload) -->
-              <div class="form-group">
-                <label for="fileInput">Foto Cerita</label>
-                <div class="camera-container" role="region" aria-label="Kamera dan Preview Foto" style="position: relative; background: #000; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                  <video id="video" autoplay playsinline aria-label="Tampilan kamera langsung" style="width: 100%; height: 100%; object-fit: cover;"></video>
-                  <canvas id="canvas" style="display: none;"></canvas>
-                  <img id="photoPreview" alt="Preview foto" style="display: none; width: 100%; height: 100%; object-fit: cover;" />
-                  
-                  <div class="camera-controls" style="position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; gap: 12px;">
-                    <button type="button" id="captureBtn" class="btn btn-primary" aria-label="Ambil Foto" style="border-radius: 50%; width: 60px; height: 60px; padding: 0; font-size: 24px;">📸</button>
-                    <button type="button" id="retakeBtn" class="btn btn-outline" aria-label="Ganti Foto" style="display: none; background: white;">Ganti Foto</button>
+            <section aria-labelledby="addTitle">
+              <h1 id="addTitle" class="section-title">Bagikan Cerita Anda</h1>
+              <p class="auth-subtitle">Bagikan momen dan lokasimu sekarang untuk dunia</p>
+  
+              <form id="addStoryForm" class="auth-form" aria-label="Form Tambah Cerita">
+                <div class="form-group">
+                  <label for="description">Ceritakan momenmu</label>
+                  <textarea 
+                    id="description" 
+                    name="description" 
+                    required 
+                    aria-required="true"
+                    placeholder="Tuliskan sesuatu yang menarik..." 
+                    style="min-height: 120px;"
+                  ></textarea>
+                </div>
+  
+                <!-- Media Section (Kamera & Upload) -->
+                <div class="form-group">
+                  <label>Foto Cerita</label>
+                  <div class="camera-wrapper" role="region" aria-label="Kamera dan Preview Foto">
+                    <video id="video" class="camera-video" autoplay playsinline aria-label="Tampilan kamera langsung"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <img id="photoPreview" class="camera-preview" alt="Preview foto" style="display: none;" />
+                    
+                    <div class="camera-controls">
+                      <button type="button" id="captureBtn" class="btn btn-primary btn-capture" aria-label="Ambil Foto">📸</button>
+                      <button type="button" id="retakeBtn" class="btn btn-outline" aria-label="Ganti Foto" style="display: none; background: white;">Ganti Foto</button>
+                    </div>
+                  </div>
+  
+                  <div style="text-align: center;">
+                    <input type="file" id="fileInput" name="photo" accept="image/*" style="display: none;">
+                    <button type="button" id="browseBtn" class="btn btn-outline" style="width: 100%;" aria-label="Pilih foto dari galeri perangkat">Pilih dari Galeri</button>
                   </div>
                 </div>
-
-                <!-- Opsi Pilih File -->
-                <div style="text-align: center;">
-                  <input type="file" id="fileInput" name="photo" accept="image/*" style="display: none;">
-                  <button type="button" id="browseBtn" class="btn btn-outline" style="width: 100%;" aria-label="Pilih foto dari galeri perangkat">Atau Pilih dari Galeri</button>
+  
+                <!-- Map Picker -->
+                <div class="form-group">
+                  <label for="mapPickerSearch" id="mapPickerLabel">Lokasi Cerita (Ketuk di Peta)</label>
+                  <p id="mapInstruction" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Opsional: Tandai lokasi di mana momen ini terjadi</p>
+                  <input type="text" id="mapPickerSearch" aria-hidden="true">
+                  <div id="mapPicker" class="map-picker-container" role="application" aria-labelledby="mapPickerLabel" aria-describedby="mapInstruction"></div>
+                  <input type="hidden" id="lat" name="lat">
+                  <input type="hidden" id="lon" name="lon">
                 </div>
-              </div>
-
-              <!-- Map Picker -->
-              <div class="form-group">
-                <label for="mapPickerSearch" id="mapPickerLabel">Pilih Lokasi (Opsional)</label>
-                <p id="mapInstruction" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Klik pada peta untuk menandai lokasi cerita</p>
-                <input type="text" id="mapPickerSearch" style="position: absolute; opacity: 0; pointer-events: none;" aria-hidden="true">
-                <div id="mapPicker" role="application" aria-labelledby="mapPickerLabel" aria-describedby="mapInstruction" style="height: 300px; border-radius: 12px; border: 1px solid var(--border-light);"></div>
-                <input type="hidden" id="lat" name="lat">
-                <input type="hidden" id="lon" name="lon">
-              </div>
-
-              <div id="errorMessage" class="error-message" role="alert" aria-live="polite" style="display: none;"></div>
-              <div id="successMessage" class="success-message" role="status" aria-live="polite" style="display: none;"></div>
-
-              <div style="display: flex; gap: 16px; margin-top: 24px;">
-                <a href="#/" class="btn btn-outline" aria-label="Batalkan dan kembali ke beranda" style="flex: 1;">Batal</a>
-                <button type="submit" id="submitBtn" class="btn btn-primary" style="flex: 2;">Bagikan Cerita</button>
-              </div>
-            </form>
-          </section>
+  
+                <div id="errorMessage" class="error-message" role="alert" aria-live="polite" style="display: none; margin-bottom: 20px;"></div>
+                <div id="successMessage" class="success-message" role="status" aria-live="polite" style="display: none; margin-bottom: 20px; padding: 12px; background: #f0fdf4; color: #166534; border-radius: 8px; border: 1px solid #bbf7d0;"></div>
+  
+                <div style="display: flex; gap: 16px; margin-top: 32px;">
+                  <a href="#/" class="btn btn-outline" style="flex: 1;">Batal</a>
+                  <button type="submit" id="submitBtn" class="btn btn-primary" style="flex: 2;">Bagikan Sekarang</button>
+                </div>
+              </form>
+            </section>
+          </div>
         </div>
       </div>
     `;
