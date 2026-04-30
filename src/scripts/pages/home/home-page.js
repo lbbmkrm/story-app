@@ -33,7 +33,7 @@ class HomePage {
                 <p>Jelajahi momen-momen menarik dari seluruh penjuru dunia</p>
                 <div style="margin-top: 24px;">
                   <a href="#/add" class="btn btn-primary btn-lg" aria-label="Bagikan Cerita Baru">
-                    ✨ Bagikan Cerita Anda
+                    &#43; Bagikan Cerita Anda
                   </a>
                 </div>
               </header>
@@ -89,7 +89,7 @@ class HomePage {
               <h3>${story.name}</h3>
               <p class="story-description">${story.description}</p>
               <div class="story-meta">
-                <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : 'Lokasi tidak tersedia'}</span>
+                <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}</span>
                 <span class="story-date">${formatDate(story.createdAt)}</span>
               </div>
               <div class="story-actions">
@@ -109,7 +109,9 @@ class HomePage {
           window.location.hash = `#/stories/${story.id}`;
         });
 
-        const focusBtn = document.querySelector(`.btn-focus-map[data-id="${story.id}"]`);
+        const focusBtn = document.querySelector(
+          `.btn-focus-map[data-id="${story.id}"]`,
+        );
         if (focusBtn) {
           focusBtn.addEventListener("click", (e) => {
             e.stopPropagation(); // Mencegah navigasi ke detail

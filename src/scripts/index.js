@@ -31,8 +31,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Delegasi event global untuk penanganan interaksi logout
   document.addEventListener("click", (event) => {
-    const logoutBtn = event.target.closest("#logoutBtn");
-    if (logoutBtn) {
+    // Cari elemen logout baik berdasarkan ID container maupun class link
+    const logoutBtn = event.target.closest("#logoutBtn, #logoutBtnMobile, .logout-link");
+    if (logoutBtn && (logoutBtn.id === "logoutBtn" || logoutBtn.id === "logoutBtnMobile" || logoutBtn.classList.contains("logout-link"))) {
       event.preventDefault();
       const confirmLogout = confirm("Apakah Anda yakin ingin keluar dari aplikasi?");
       if (confirmLogout) {
@@ -50,12 +51,15 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 function updateNavigation() {
   const logoutBtn = document.querySelector("#logoutBtn");
-  const loginLink = document.querySelector('a[href="#/login"]');
-  const registerLink = document.querySelector('a[href="#/register"]');
+  const logoutBtnMobile = document.querySelector("#logoutBtnMobile");
+  const guestActions = document.querySelector("#guestActions");
+  const guestActionsMobile = document.querySelector("#guestActionsMobile");
   
   const loggedIn = AuthModel.isUserLoggedIn();
 
   if (logoutBtn) logoutBtn.style.display = loggedIn ? "block" : "none";
-  if (loginLink) loginLink.parentElement.style.display = loggedIn ? "none" : "block";
-  if (registerLink) registerLink.parentElement.style.display = loggedIn ? "none" : "block";
+  if (logoutBtnMobile) logoutBtnMobile.style.display = loggedIn ? "block" : "none";
+  
+  if (guestActions) guestActions.style.display = loggedIn ? "none" : "flex";
+  if (guestActionsMobile) guestActionsMobile.style.display = loggedIn ? "none" : "flex";
 }

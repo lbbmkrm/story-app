@@ -70,6 +70,13 @@ class App {
 
     const url = getActiveRoute();
     const page = routes[url];
+
+    if (!page) {
+      console.warn(`Route not found: ${url}. Redirecting to home.`);
+      window.location.hash = "#/";
+      return;
+    }
+
     this.#currentPage = page;
 
     // Logika menyembunyikan header dan footer pada halaman Login/Register
