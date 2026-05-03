@@ -16,6 +16,14 @@ class StoryModel {
   static async getStoryDetail(id) {
     return await StoryApi.getStoryDetail(id);
   }
+
+  static async subscribePushNotification(subscription) {
+    return await StoryApi.subscribePushNotification(subscription);
+  }
+
+  static async unsubscribePushNotification(subscription) {
+    return await StoryApi.unsubscribePushNotification(subscription);
+  }
 }
 
 export default StoryModel;
