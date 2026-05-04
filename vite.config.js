@@ -23,12 +23,15 @@ export default defineConfig({
       filename: "sw.js",
       manifest: {
         name: "Story App",
-        short_name: "Story App",
-        description: "Story App",
-        start_url: "/",
-        display: "standalone",
-        background_color: "#ffffff",
+        short_name: "StoryApp",
+        description:
+          "Platform berbagi momen dan cerita berbasis lokasi geografis",
         theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        start_url: "/",
+        scope: "/",
+        orientation: "portrait",
         icons: [
           {
             src: "/images/logo.png",
@@ -40,7 +43,41 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
           },
+          {
+            src: "/images/logo.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable",
+          },
         ],
+        screenshots: [
+          {
+            src: "/images/screenshot-desktop.png",
+            sizes: "1920x1080",
+            type: "image/png",
+            form_factor: "wide",
+            label: "Desktop Story App",
+          },
+          {
+            src: "/images/screenshot-mobile.png",
+            sizes: "512x512",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Mobile Story App",
+          },
+        ],
+        shortcuts: [
+          {
+            name: "Add Story",
+            short_name: "Add",
+            description: "Add a new story",
+            url: "/#/add",
+            icons: [{ src: "/images/logo.png", sizes: "192x192" }],
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
       },
     }),
   ],
