@@ -95,30 +95,38 @@ registerRoute(
   "POST",
 );
 
-// ─── Push Notification Handler ────────────────────────────────────────────────
-
+// Menangani event push dari server untuk menampilkan notifikasi
 self.addEventListener("push", (event) => {
   if (!event.data) return;
 
   let data;
   try {
     data = event.data.json();
-  } catch {
-    data = { title: "Notifikasi", body: event.data.text() };
+  } catch (err) {
+    data = { title: "Story App", body: event.data.text() };
   }
 
+  // Mendukung berbagai format payload notifikasi dari API
+  const title = data.title || data.notification?.title || "Cerita Baru!";
+  const body = 
+    data.options?.body || 
+    data.body || 
+    data.notification?.body || 
+    data.message || 
+    "Seseorang baru saja membagikan momen baru.";
+  const icon = data.icon || data.notification?.icon || "/images/logo.png";
+  
   const options = {
-    body: data.body || "",
-    icon: "/images/logo.png",
+    body: body,
+    icon: icon,
     badge: "/images/logo.png",
+    vibrate: [100, 50, 100],
     data: {
-      url: data.url || "/",
+      url: data.url || data.notification?.click_action || "/",
     },
   };
 
-  event.waitUntil(
-    self.registration.showNotification(data.title || "Notifikasi", options),
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", (event) => {

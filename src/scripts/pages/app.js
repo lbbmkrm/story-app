@@ -118,45 +118,29 @@ class App {
   }
 
   /**
-   * Menangani aksi toggle subscribe/unsubscribe push notification
+   * Menangani aksi aktif/nonaktifkan subskripsi notifikasi
    */
   async #handleSubscribeToggle() {
-    console.log("Push Notification: Memulai proses toggle...");
     try {
       const registration = await getSwRegistered();
-      console.log("Push Notification: Service Worker siap:", registration);
-      
       const subscribed = await isSubscribed(registration);
-      console.log("Push Notification: Status subskripsi saat ini:", subscribed);
 
       if (subscribed) {
-        console.log("Push Notification: Menjalankan proses Unsubscribe...");
         const subscription = await registration.pushManager.getSubscription();
         await StoryModel.unsubscribePushNotification(subscription);
         await unsubscribePushNotification(registration);
-        alert("Notifikasi berhasil dinonaktifkan.");
+        alert("Notifikasi telah dinonaktifkan.");
       } else {
-        console.log("Push Notification: Meminta izin notifikasi...");
         await requestNotificationPermission();
-        
-        console.log("Push Notification: Mencoba melakukan subscribe ke Push Manager...");
         const subscription = await subscribePushNotification(registration);
-        console.log("Push Notification: Berhasil mendapatkan objek subscription:", subscription);
-        
-        console.log("Push Notification: Mengirim subscription ke API Story...");
         await StoryModel.subscribePushNotification(subscription);
-        alert("Notifikasi berhasil diaktifkan!");
+        alert("Notifikasi berhasil diaktifkan.");
       }
 
       await this.#updateSubscribeButtonState();
     } catch (error) {
-      console.error("DEBUG PUSH NOTIFICATION ERROR:", {
-        message: error.message,
-        name: error.name,
-        stack: error.stack,
-        errorObject: error
-      });
-      alert(`Gagal mengatur notifikasi: ${error.message}`);
+      console.error("Kesalahan Push Notification:", error);
+      alert(`Gagal memperbarui status notifikasi: ${error.message}`);
     }
   }
 
