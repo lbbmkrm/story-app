@@ -98,27 +98,42 @@ registerRoute(
 // ─── Push Notification Handler ────────────────────────────────────────────────
 
 self.addEventListener("push", (event) => {
-  if (!event.data) return;
+  console.log("Push event received:", event);
+
+  if (!event.data) {
+    console.warn("Push event had no data.");
+    return;
+  }
 
   let data;
   try {
     data = event.data.json();
-  } catch {
-    data = { title: "Notifikasi", body: event.data.text() };
+  } catch (err) {
+    console.log("Push data is not JSON, using text instead.");
+    data = { title: "Story App", body: event.data.text() };
   }
 
+  // Mendukung berbagai format payload (title/body, notification.title/body, atau options.body)
+  const title = data.title || data.notification?.title || "Cerita Baru!";
+  const body = 
+    data.options?.body || 
+    data.body || 
+    data.notification?.body || 
+    data.message || 
+    "Seseorang baru saja membagikan momen baru.";
+  const icon = data.icon || data.notification?.icon || "/images/logo.png";
+  
   const options = {
-    body: data.body || "",
-    icon: "/images/logo.png",
+    body: body,
+    icon: icon,
     badge: "/images/logo.png",
+    vibrate: [100, 50, 100],
     data: {
-      url: data.url || "/",
+      url: data.url || data.notification?.click_action || "/",
     },
   };
 
-  event.waitUntil(
-    self.registration.showNotification(data.title || "Notifikasi", options),
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", (event) => {
