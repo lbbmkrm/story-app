@@ -37,12 +37,28 @@ class DetailPage {
     await this.#presenter.loadDetail();
   }
 
-  renderDetail(story) {
+  async renderDetail(story) {
     const container = document.querySelector("#detailContent");
+    
+    // Cek status favorit dari database
+    const favoriteStory = await StoryModel.getFavoriteStory(story.id);
+    const isFavorite = !!favoriteStory;
+
     container.innerHTML = `
       <article class="detail-article">
         <header class="detail-header">
-          <h1 class="detail-title">${story.name}</h1>
+          <div class="detail-title-row" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <h1 class="detail-title" style="margin: 0;">${story.name}</h1>
+            <button 
+              id="favoriteBtnDetail" 
+              class="btn-favorite" 
+              aria-label="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
+              title="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
+              style="font-size: 2rem;"
+            >
+              ${isFavorite ? "❤️" : "🤍"}
+            </button>
+          </div>
           <div class="detail-meta">
             <span class="detail-date">📅 ${formatDate(story.createdAt)}</span>
             <span class="detail-location-text">📍 ${story.lat ? `${story.lat.toFixed(4)}, ${story.lon.toFixed(4)}` : 'Lokasi tidak tersedia'}</span>
@@ -66,6 +82,22 @@ class DetailPage {
         ` : ''}
       </article>
     `;
+
+    // Inisialisasi event listener untuk tombol favorit
+    const favoriteBtn = document.querySelector("#favoriteBtnDetail");
+    favoriteBtn.addEventListener("click", async () => {
+      const isCurrentlyFavorite = favoriteBtn.textContent.trim() === "❤️";
+      
+      if (isCurrentlyFavorite) {
+        await StoryModel.deleteFavoriteStory(story.id);
+        favoriteBtn.textContent = "🤍";
+        favoriteBtn.setAttribute("aria-label", "Tambah ke favorit");
+      } else {
+        await StoryModel.putFavoriteStory(story);
+        favoriteBtn.textContent = "❤️";
+        favoriteBtn.setAttribute("aria-label", "Hapus dari favorit");
+      }
+    });
   }
 
   initializeMiniMap(lat, lon, name) {

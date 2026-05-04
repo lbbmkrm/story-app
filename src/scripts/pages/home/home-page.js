@@ -64,7 +64,7 @@ class HomePage {
    * Merender daftar cerita ke dalam DOM dan mendaftarkan event listener
    * @param {Array} stories - Array berisi objek cerita dari API
    */
-  renderStories(stories) {
+  async renderStories(stories) {
     const container = document.querySelector("#storiesContainer");
 
     if (stories.length === 0) {
@@ -73,31 +73,48 @@ class HomePage {
       return;
     }
 
+    // Ambil semua ID cerita favorit untuk pengecekan status tombol
+    const favoriteStories = await StoryModel.getAllFavoriteStories();
+    const favoriteIds = favoriteStories.map((s) => s.id);
+
     container.innerHTML = stories
       .map(
-        (story) => `
-          <article class="story-card" data-story-id="${story.id}" tabindex="0" role="button" aria-label="Cerita dari ${story.name}">
-            <div class="story-image-wrapper">
-              <img 
-                src="${story.photoUrl}" 
-                alt="Foto cerita ${story.name}"
-                class="story-image"
-                loading="lazy"
-              />
-            </div>
-            <div class="story-content">
-              <h3>${story.name}</h3>
-              <p class="story-description">${story.description}</p>
-              <div class="story-meta">
-                <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}</span>
-                <span class="story-date">${formatDate(story.createdAt)}</span>
+        (story) => {
+          const isFavorite = favoriteIds.includes(story.id);
+          return `
+            <article class="story-card" data-story-id="${story.id}" tabindex="0" role="button" aria-label="Cerita dari ${story.name}">
+              <div class="story-image-wrapper">
+                <img 
+                  src="${story.photoUrl}" 
+                  alt="Foto cerita ${story.name}"
+                  class="story-image"
+                  loading="lazy"
+                />
               </div>
-              <div class="story-actions">
-                <button class="btn-focus-map" data-id="${story.id}" title="Lihat di Peta" aria-label="Lihat lokasi di peta">📍</button>
+              <div class="story-content">
+                <div class="story-header-row">
+                  <h3>${story.name}</h3>
+                  <button 
+                    class="btn-favorite" 
+                    data-id="${story.id}" 
+                    aria-label="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
+                    title="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
+                  >
+                    ${isFavorite ? "❤️" : "🤍"}
+                  </button>
+                </div>
+                <p class="story-description">${story.description}</p>
+                <div class="story-meta">
+                  <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}</span>
+                  <span class="story-date">${formatDate(story.createdAt)}</span>
+                </div>
+                <div class="story-actions">
+                  <button class="btn-focus-map" data-id="${story.id}" title="Lihat di Peta" aria-label="Lihat lokasi di peta">📍</button>
+                </div>
               </div>
-            </div>
-          </article>
-        `,
+            </article>
+          `;
+        }
       )
       .join("");
 
@@ -114,8 +131,29 @@ class HomePage {
         );
         if (focusBtn) {
           focusBtn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Mencegah navigasi ke detail
+            e.stopPropagation();
             this.#presenter.onStorySelected(story.id);
+          });
+        }
+
+        // Handle Klik Tombol Favorit
+        const favoriteBtn = document.querySelector(
+          `.btn-favorite[data-id="${story.id}"]`,
+        );
+        if (favoriteBtn) {
+          favoriteBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            const isCurrentlyFavorite = favoriteBtn.textContent.trim() === "❤️";
+            
+            if (isCurrentlyFavorite) {
+              await StoryModel.deleteFavoriteStory(story.id);
+              favoriteBtn.textContent = "🤍";
+              favoriteBtn.setAttribute("aria-label", "Tambah ke favorit");
+            } else {
+              await StoryModel.putFavoriteStory(story);
+              favoriteBtn.textContent = "❤️";
+              favoriteBtn.setAttribute("aria-label", "Hapus dari favorit");
+            }
           });
         }
 

@@ -8,6 +8,7 @@ import {
 } from "workbox-strategies";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import { ExpirationPlugin } from "workbox-expiration";
+import { BackgroundSyncPlugin } from "workbox-background-sync";
 
 self.skipWaiting();
 clientsClaim();
@@ -79,6 +80,19 @@ registerRoute(
       }),
     ],
   }),
+);
+
+// Penanganan Background Sync untuk Unggah Cerita (Kriteria Advanced)
+const bgSyncPlugin = new BackgroundSyncPlugin("story-queue", {
+  maxRetentionTime: 24 * 60, // Coba kirim ulang selama 24 jam
+});
+
+registerRoute(
+  ({ url }) => url.origin === "https://story-api.dicoding.dev" && url.pathname.endsWith("/stories"),
+  new NetworkFirst({
+    plugins: [bgSyncPlugin],
+  }),
+  "POST",
 );
 
 // ─── Push Notification Handler ────────────────────────────────────────────────

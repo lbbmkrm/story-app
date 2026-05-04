@@ -19,7 +19,17 @@ class AddPresenter {
         window.location.hash = "#/";
       }, 2000);
     } catch (error) {
-      this.#view.showError(error.message);
+      // Penanganan khusus untuk mode offline (Kriteria Advanced)
+      if (!navigator.onLine) {
+        this.#view.showSuccess(
+          "Anda sedang offline. Cerita telah disimpan secara lokal dan akan otomatis diunggah saat koneksi internet tersedia."
+        );
+        setTimeout(() => {
+          window.location.hash = "#/";
+        }, 4000);
+      } else {
+        this.#view.showError(error.message || "Gagal membagikan cerita. Silakan coba lagi.");
+      }
     } finally {
       this.#view.hideLoading();
     }
