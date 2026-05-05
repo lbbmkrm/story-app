@@ -50,17 +50,6 @@ registerRoute(
 );
 
 registerRoute(
-  ({ url }) => url.origin === "https://story-api.dicoding.dev",
-  new NetworkFirst({
-    cacheName: "story-api-cache",
-    plugins: [
-      new CacheableResponsePlugin({ statuses: [0, 200] }),
-      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 }),
-    ],
-  }),
-);
-
-registerRoute(
   ({ request }) => request.destination === "image",
   new CacheFirst({
     cacheName: "story-images-cache",
@@ -70,6 +59,19 @@ registerRoute(
         maxEntries: 50,
         maxAgeSeconds: 60 * 60 * 24 * 30,
       }),
+    ],
+  }),
+);
+
+registerRoute(
+  ({ url, request }) =>
+    url.origin === "https://story-api.dicoding.dev" &&
+    request.destination !== "image",
+  new NetworkFirst({
+    cacheName: "story-api-cache",
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [0, 200] }),
+      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 }),
     ],
   }),
 );
@@ -115,18 +117,13 @@ self.addEventListener("push", (event) => {
   const options = {
     body: body,
     icon: icon,
-    body: body,
-    icon: icon,
     badge: "/images/logo.png",
     vibrate: [100, 50, 100],
-    vibrate: [100, 50, 100],
     data: {
-      url: data.url || data.notification?.click_action || "/",
       url: data.url || data.notification?.click_action || "/",
     },
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
   event.waitUntil(self.registration.showNotification(title, options));
 });
 

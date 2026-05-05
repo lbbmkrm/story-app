@@ -59,9 +59,9 @@ class FavoritePage {
     const updateView = async () => {
       const query = document.querySelector("#searchFavorite").value;
       const sortOrder = document.querySelector("#sortFavorite").value;
-      
+
       let stories = await StoryModel.searchFavoriteStories(query);
-      
+
       // Logika Pengurutan (Sorting)
       stories.sort((a, b) => {
         const dateA = new Date(a.createdAt);
@@ -73,10 +73,14 @@ class FavoritePage {
     };
 
     // Event listener untuk Pencarian
-    document.querySelector("#searchFavorite").addEventListener("input", updateView);
-    
+    document
+      .querySelector("#searchFavorite")
+      .addEventListener("input", updateView);
+
     // Event listener untuk Pengurutan
-    document.querySelector("#sortFavorite").addEventListener("change", updateView);
+    document
+      .querySelector("#sortFavorite")
+      .addEventListener("change", updateView);
 
     // Render awal
     await updateView();
