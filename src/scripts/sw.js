@@ -89,7 +89,12 @@ registerRoute(
 );
 
 self.addEventListener("push", (event) => {
-  if (!event.data) return;
+  console.log("Push event received:", event);
+
+  if (!event.data) {
+    console.warn("Push event had no data.");
+    return;
+  }
 
   let data;
   try {
@@ -110,13 +115,18 @@ self.addEventListener("push", (event) => {
   const options = {
     body: body,
     icon: icon,
+    body: body,
+    icon: icon,
     badge: "/images/logo.png",
     vibrate: [100, 50, 100],
+    vibrate: [100, 50, 100],
     data: {
+      url: data.url || data.notification?.click_action || "/",
       url: data.url || data.notification?.click_action || "/",
     },
   };
 
+  event.waitUntil(self.registration.showNotification(title, options));
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
