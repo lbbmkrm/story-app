@@ -70,10 +70,9 @@ class HomePage {
     const favoriteIds = favoriteStories.map((s) => s.id);
 
     container.innerHTML = stories
-      .map(
-        (story) => {
-          const isFavorite = favoriteIds.includes(story.id);
-          return `
+      .map((story) => {
+        const isFavorite = favoriteIds.includes(story.id);
+        return `
             <article class="story-card" data-story-id="${story.id}" tabindex="0" role="button" aria-label="Cerita dari ${story.name}">
               <div class="story-image-wrapper">
                 <img 
@@ -85,29 +84,33 @@ class HomePage {
               </div>
               <div class="story-content">
                 <div class="story-header-row">
-                  <h3>${story.name}</h3>
+                  <h2>${story.name}</h2>
                   <button 
                     class="btn-favorite" 
                     data-id="${story.id}" 
                     aria-label="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
                     title="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
                   >
-                    ${isFavorite ? "❤️" : "🤍"}
+                    ${isFavorite ? '<span class="material-icons-outlined" style="color: #ef4444;">favorite</span>' : '<span class="material-icons-outlined">favorite_border</span>'}
                   </button>
                 </div>
                 <p class="story-description">${story.description}</p>
                 <div class="story-meta">
-                  <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}</span>
+                  <span class="story-location" style="display: inline-flex; align-items: center; gap: 4px;">
+                    <span class="material-icons-outlined" style="font-size: 16px;">place</span> 
+                    ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}
+                  </span>
                   <span class="story-date">${formatDate(story.createdAt)}</span>
                 </div>
                 <div class="story-actions">
-                  <button class="btn-focus-map" data-id="${story.id}" title="Lihat di Peta" aria-label="Lihat lokasi di peta">📍</button>
+                  <button class="btn-focus-map" data-id="${story.id}" title="Lihat di Peta" aria-label="Lihat lokasi di peta" style="display: inline-flex; align-items: center; justify-content: center;">
+                    <span class="material-icons-outlined" style="font-size: 20px;">my_location</span>
+                  </button>
                 </div>
               </div>
             </article>
           `;
-        }
-      )
+      })
       .join("");
 
     stories.forEach((story) => {
@@ -133,15 +136,20 @@ class HomePage {
         if (favoriteBtn) {
           favoriteBtn.addEventListener("click", async (e) => {
             e.stopPropagation();
-            const isCurrentlyFavorite = favoriteBtn.textContent.trim() === "❤️";
-            
+            const iconElement = favoriteBtn.querySelector(
+              ".material-icons-outlined",
+            );
+            const isCurrentlyFavorite = iconElement.textContent === "favorite";
+
             if (isCurrentlyFavorite) {
               await StoryModel.deleteFavoriteStory(story.id);
-              favoriteBtn.textContent = "🤍";
+              iconElement.textContent = "favorite_border";
+              iconElement.style.color = "";
               favoriteBtn.setAttribute("aria-label", "Tambah ke favorit");
             } else {
               await StoryModel.putFavoriteStory(story);
-              favoriteBtn.textContent = "❤️";
+              iconElement.textContent = "favorite";
+              iconElement.style.color = "#ef4444";
               favoriteBtn.setAttribute("aria-label", "Hapus dari favorit");
             }
           });
@@ -206,7 +214,7 @@ class HomePage {
             `
             <div class="marker-popup">
               <img src="${story.photoUrl}" alt="${story.name}" style="width: 100%; max-height: 150px; border-radius: 4px;" />
-              <h4>${story.name}</h4>
+              <h3>${story.name}</h3>
               <p>${story.description.substring(0, 100)}...</p>
             </div>
           `,
@@ -279,8 +287,7 @@ class HomePage {
     container.innerHTML = "<p>Memperbarui daftar cerita...</p>";
   }
 
-  hideLoading() {
-  }
+  hideLoading() {}
 
   showError(message) {
     const errorDiv = document.querySelector("#errorMessage");

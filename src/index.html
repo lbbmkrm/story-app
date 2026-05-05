@@ -17,6 +17,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Material Icons (Outlined) -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
 
     <!-- Leaflet CSS -->
     <link
@@ -68,10 +73,21 @@
             <button
               id="subscribeBtnMobile"
               class="btn btn-outline"
-              style="display: none; width: 100%; margin-top: 16px; margin-bottom: 8px;"
+              style="
+                display: none;
+                width: 100%;
+                margin-top: 16px;
+                margin-bottom: 8px;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+              "
               aria-label="Aktifkan atau nonaktifkan notifikasi"
             >
-              🔔 Aktifkan Notifikasi
+              <span class="material-icons-outlined" style="font-size: 18px"
+                >notifications</span
+              >
+              Aktifkan Notifikasi
             </button>
             <div id="logoutBtnMobile" style="display: none">
               <a href="#logout" class="btn btn-primary logout-link">Logout</a>
@@ -90,10 +106,18 @@
           <button
             id="subscribeBtn"
             class="btn btn-outline"
-            style="display: none; margin-right: 12px;"
+            style="
+              display: none;
+              margin-right: 12px;
+              align-items: center;
+              gap: 8px;
+            "
             aria-label="Aktifkan atau nonaktifkan notifikasi"
           >
-            🔔 Aktifkan Notifikasi
+            <span class="material-icons-outlined" style="font-size: 18px"
+              >notifications</span
+            >
+            Aktifkan Notifikasi
           </button>
         </div>
 
@@ -104,7 +128,7 @@
           aria-expanded="false"
           aria-controls="navigation-drawer"
         >
-          ☰
+          <span class="material-icons-outlined">menu</span>
         </button>
       </div>
     </header>
@@ -127,7 +151,7 @@
       "
     >
       <div class="container">
-        <p>&copy; 2026 Story App. Dibuat dengan ... untuk berbagi cerita.</p>
+        <p>&copy; 2026 Story App.</p>
       </div>
     </footer>
   </body>

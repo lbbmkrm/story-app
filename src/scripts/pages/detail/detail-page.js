@@ -53,14 +53,20 @@ class DetailPage {
               class="btn-favorite" 
               aria-label="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
               title="${isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}"
-              style="font-size: 2rem;"
+              style="display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer;"
             >
-              ${isFavorite ? "❤️" : "🤍"}
+              ${isFavorite ? '<span class="material-icons-outlined" style="font-size: 2.5rem; color: #ef4444;">favorite</span>' : '<span class="material-icons-outlined" style="font-size: 2.5rem;">favorite_border</span>'}
             </button>
           </div>
-          <div class="detail-meta">
-            <span class="detail-date">📅 ${formatDate(story.createdAt)}</span>
-            <span class="detail-location-text">📍 ${story.lat !== null && story.lon !== null ? `${story.lat.toFixed(4)}, ${story.lon.toFixed(4)}` : 'Lokasi tidak tersedia'}</span>
+          <div class="detail-meta" style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px;">
+            <span class="detail-date" style="display: inline-flex; align-items: center; gap: 6px;">
+              <span class="material-icons-outlined" style="font-size: 18px;">event</span>
+              ${formatDate(story.createdAt)}
+            </span>
+            <span class="detail-location-text" style="display: inline-flex; align-items: center; gap: 6px;">
+              <span class="material-icons-outlined" style="font-size: 18px;">place</span>
+              ${story.lat !== null && story.lon !== null ? `${story.lat.toFixed(4)}, ${story.lon.toFixed(4)}` : 'Lokasi tidak tersedia'}
+            </span>
           </div>
         </header>
 
@@ -84,15 +90,18 @@ class DetailPage {
 
     const favoriteBtn = document.querySelector("#favoriteBtnDetail");
     favoriteBtn.addEventListener("click", async () => {
-      const isCurrentlyFavorite = favoriteBtn.textContent.trim() === "❤️";
+      const iconElement = favoriteBtn.querySelector(".material-icons-outlined");
+      const isCurrentlyFavorite = iconElement.textContent === "favorite";
       
       if (isCurrentlyFavorite) {
         await StoryModel.deleteFavoriteStory(story.id);
-        favoriteBtn.textContent = "🤍";
+        iconElement.textContent = "favorite_border";
+        iconElement.style.color = "";
         favoriteBtn.setAttribute("aria-label", "Tambah ke favorit");
       } else {
         await StoryModel.putFavoriteStory(story);
-        favoriteBtn.textContent = "❤️";
+        iconElement.textContent = "favorite";
+        iconElement.style.color = "#ef4444";
         favoriteBtn.setAttribute("aria-label", "Hapus dari favorit");
       }
     });

@@ -42,7 +42,7 @@ class FavoritePage {
         
         <div id="emptyMessage" style="display: none; text-align: center; padding: 60px 20px;">
           <div style="font-size: 4rem; margin-bottom: 16px;">🤍</div>
-          <h3>Belum Ada Favorit</h3>
+          <h2>Belum Ada Favorit</h2>
           <p>Cerita yang Anda tandai dengan hati akan muncul di sini.</p>
           <a href="#/" class="btn btn-primary" style="margin-top: 20px;">Jelajahi Cerita</a>
         </div>
@@ -107,11 +107,16 @@ class FavoritePage {
             <div class="story-content">
               <div class="story-header-row">
                 <h3>${story.name}</h3>
-                <button class="btn-favorite active" data-id="${story.id}" title="Hapus dari favorit">❤️</button>
+                <button class="btn-favorite active" data-id="${story.id}" title="Hapus dari favorit">
+                  <span class="material-icons-outlined" style="color: #ef4444;">favorite</span>
+                </button>
               </div>
               <p class="story-description">${story.description}</p>
               <div class="story-meta">
-                <span class="story-location">📍 ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}</span>
+                <span class="story-location" style="display: inline-flex; align-items: center; gap: 4px;">
+                  <span class="material-icons-outlined" style="font-size: 16px;">place</span> 
+                  ${story.lat ? `${story.lat.toFixed(1)}, ${story.lon.toFixed(1)}` : "Lokasi tidak tersedia"}
+                </span>
                 <span class="story-date">${formatDate(story.createdAt)}</span>
               </div>
             </div>

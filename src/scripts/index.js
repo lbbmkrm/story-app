@@ -1,4 +1,3 @@
-// Import global stylesheet
 import "../styles/styles.css";
 import "../styles/validation.css";
 import { registerSW } from "virtual:pwa-register";
@@ -6,11 +5,7 @@ import { registerSW } from "virtual:pwa-register";
 import AuthModel from "./data/auth-model";
 import App from "./pages/app";
 
-/**
- * Inisialisasi utama aplikasi saat DOM telah siap
- */
 document.addEventListener("DOMContentLoaded", async () => {
-  // Inisialisasi orchestrator aplikasi
   const app = new App({
     content: document.querySelector("#main-content"),
     drawerButton: document.querySelector("#drawer-button"),
@@ -18,21 +13,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     skipLinkButton: document.querySelector("#skip-link"),
   });
 
-  // Sinkronisasi status navigasi pada pemuatan awal
   updateNavigation();
 
-  // Listener untuk perubahan rute berbasis hash
   window.addEventListener("hashchange", async () => {
     updateNavigation();
     await app.renderPage();
   });
 
-  // Render halaman pertama kali
   await app.renderPage();
 
-  // Delegasi event global untuk penanganan interaksi logout
   document.addEventListener("click", (event) => {
-    // Cari elemen logout baik berdasarkan ID container maupun class link
     const logoutBtn = event.target.closest(
       "#logoutBtn, #logoutBtnMobile, .logout-link",
     );
@@ -47,7 +37,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         "Apakah Anda yakin ingin keluar dari aplikasi?",
       );
       if (confirmLogout) {
-        // Pembersihan kredensial sesi melalui Model
         AuthModel.logout();
         updateNavigation();
         window.location.hash = "#/login";
@@ -56,9 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-/**
- * Memperbarui visibilitas elemen navigasi berdasarkan status otentikasi pengguna
- */
 function updateNavigation() {
   const logoutBtn = document.querySelector("#logoutBtn");
   const logoutBtnMobile = document.querySelector("#logoutBtnMobile");

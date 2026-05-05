@@ -22,7 +22,10 @@ export default class AddPage {
         <div class="container">
           <div class="add-card">
             <nav class="breadcrumb" style="margin-bottom: 24px;">
-              <a href="#/" class="back-link">← Kembali ke Beranda</a>
+              <a href="#/" class="back-link" style="display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-icons-outlined" style="font-size: 18px;">arrow_back</span>
+                Kembali ke Beranda
+              </a>
             </nav>
 
             <section aria-labelledby="addTitle">
@@ -50,7 +53,9 @@ export default class AddPage {
                     <img id="photoPreview" class="camera-preview" alt="Preview foto" style="display: none;" />
                     
                     <div class="camera-controls">
-                      <button type="button" id="captureBtn" class="btn btn-primary btn-capture" aria-label="Ambil Foto">📸</button>
+                      <button type="button" id="captureBtn" class="btn btn-primary btn-capture" aria-label="Ambil Foto" style="display: flex; align-items: center; justify-content: center;">
+                        <span class="material-icons-outlined" style="font-size: 24px;">photo_camera</span>
+                      </button>
                       <button type="button" id="retakeBtn" class="btn btn-outline" aria-label="Ganti Foto" style="display: none; background: white;">Ganti Foto</button>
                     </div>
                   </div>
