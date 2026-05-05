@@ -11,10 +11,6 @@ import {
   isSubscribed,
 } from "../utils/push-notification";
 
-/**
- * Class App bertindak sebagai orchestrator utama SPA.
- * Mengelola rendering halaman, routing, dan komponen global (drawer).
- */
 class App {
   #content = null;
   #drawerButton = null;
@@ -33,16 +29,10 @@ class App {
     this.#setupPushSubscribeButton();
   }
 
-  /**
-   * Menghubungkan fungsi skip-link untuk aksesibilitas keyboard
-   */
   #setupSkipContent() {
     setupSkipContent(this.#skipLinkButton, this.#content);
   }
 
-  /**
-   * Mengatur interaksi navigation drawer dan ARIA attributes
-   */
   #setupDrawer() {
     this.#drawerButton.addEventListener("click", () => {
       const isOpen = this.#navigationDrawer.classList.toggle("open");
@@ -67,11 +57,6 @@ class App {
     });
   }
 
-  // ─── Push Notification ────────────────────────────────────────────────────
-
-  /**
-   * Mendaftarkan event listener pada tombol subscribe (desktop & mobile)
-   */
   #setupPushSubscribeButton() {
     const btn = document.getElementById("subscribeBtn");
     const btnMobile = document.getElementById("subscribeBtnMobile");
@@ -84,21 +69,16 @@ class App {
     }
   }
 
-  /**
-   * Memperbarui tampilan tombol subscribe sesuai status login dan status subscribe
-   */
   async #updateSubscribeButtonState() {
     const btn = document.getElementById("subscribeBtn");
     const btnMobile = document.getElementById("subscribeBtnMobile");
 
-    // Sembunyikan tombol jika user belum login
     if (!AuthModel.isUserLoggedIn()) {
       if (btn) btn.style.display = "none";
       if (btnMobile) btnMobile.style.display = "none";
       return;
     }
 
-    // Tampilkan tombol jika user sudah login
     if (btn) btn.style.display = "inline-flex";
     if (btnMobile) btnMobile.style.display = "inline-flex";
 
@@ -117,9 +97,6 @@ class App {
     }
   }
 
-  /**
-   * Menangani aksi aktif/nonaktifkan subskripsi notifikasi
-   */
   async #handleSubscribeToggle() {
     try {
       const registration = await getSwRegistered();
@@ -144,12 +121,6 @@ class App {
     }
   }
 
-  // ─── Render Page ──────────────────────────────────────────────────────────
-
-  /**
-   * Prosedur utama rendering halaman berdasarkan rute aktif.
-   * Mendukung siklus hidup halaman (onPageLeave) dan View Transition API.
-   */
   async renderPage() {
     if (this.#currentPage && this.#currentPage.onPageLeave) {
       this.#currentPage.onPageLeave();
@@ -177,12 +148,9 @@ class App {
       if (footer) footer.style.display = "block";
     }
 
-    await transitionToView(async () => {
-      this.#content.innerHTML = await page.render();
-      await page.afterRender();
-    });
+    this.#content.innerHTML = await page.render();
+    await page.afterRender();
 
-    // Update state tombol subscribe setiap kali halaman berganti
     await this.#updateSubscribeButtonState();
 
     window.scrollTo({ top: 0, behavior: "smooth" });

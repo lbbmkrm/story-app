@@ -20,12 +20,10 @@ class HomePage {
     return `
       <div class="home-container">
         <div class="home-content">
-          <!-- Area Peta di Atas -->
           <section class="map-section" aria-label="Peta Lokasi Cerita">
             <div id="map" class="map-container" role="application" aria-label="Peta Interaktif Cerita"></div>
           </section>
 
-          <!-- Area Konten di Bawah -->
           <div class="container">
             <section class="stories-section" aria-label="Daftar Cerita Terbaru">
               <header class="stories-header">
@@ -51,7 +49,6 @@ class HomePage {
   }
 
   async afterRender() {
-    // Validasi sesi pengguna sebelum memuat konten
     if (!AuthModel.isUserLoggedIn()) {
       window.location.hash = "#/login";
       return;
@@ -60,10 +57,6 @@ class HomePage {
     await this.#presenter.loadStories();
   }
 
-  /**
-   * Merender daftar cerita ke dalam DOM dan mendaftarkan event listener
-   * @param {Array} stories - Array berisi objek cerita dari API
-   */
   async renderStories(stories) {
     const container = document.querySelector("#storiesContainer");
 
@@ -73,7 +66,6 @@ class HomePage {
       return;
     }
 
-    // Ambil semua ID cerita favorit untuk pengecekan status tombol
     const favoriteStories = await StoryModel.getAllFavoriteStories();
     const favoriteIds = favoriteStories.map((s) => s.id);
 
@@ -118,7 +110,6 @@ class HomePage {
       )
       .join("");
 
-    // Registrasi listener interaksi pada kartu cerita
     stories.forEach((story) => {
       const card = document.querySelector(`[data-story-id="${story.id}"]`);
       if (card) {
@@ -136,7 +127,6 @@ class HomePage {
           });
         }
 
-        // Handle Klik Tombol Favorit
         const favoriteBtn = document.querySelector(
           `.btn-favorite[data-id="${story.id}"]`,
         );
@@ -157,7 +147,6 @@ class HomePage {
           });
         }
 
-        // Dukungan aksesibilitas navigasi keyboard
         card.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -168,15 +157,9 @@ class HomePage {
     });
   }
 
-  /**
-   * Inisialisasi instance peta Leaflet dan penempatan marker koordinat
-   * @param {Array} stories - Array berisi objek cerita dengan lat/lon
-   */
   initializeMap(stories) {
-    // Membersihkan instance peta sebelumnya jika ada (Mencegah memory leak)
     const mapContainer = document.querySelector("#map");
 
-    // Hapus paksa properti internal Leaflet jika elemen di-reuse
     if (mapContainer && mapContainer._leaflet_id) {
       mapContainer._leaflet_id = null;
     }
@@ -187,7 +170,6 @@ class HomePage {
       console.warn("Leaflet init warning:", error);
     }
 
-    // Layer jalan raya standar
     const osmLayer = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
@@ -196,7 +178,6 @@ class HomePage {
       },
     );
 
-    // Layer satelit detail
     const satelliteLayer = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
@@ -207,7 +188,6 @@ class HomePage {
 
     osmLayer.addTo(this.#map);
 
-    // Kontrol penggantian tipe layer peta
     L.control
       .layers(
         {
@@ -219,7 +199,6 @@ class HomePage {
       )
       .addTo(this.#map);
 
-    // Pembuatan marker untuk setiap cerita yang memiliki koordinat
     stories.forEach((story) => {
       if (story.lat && story.lon) {
         const marker = L.marker([story.lat, story.lon])
@@ -243,10 +222,6 @@ class HomePage {
     });
   }
 
-  /**
-   * Memberikan efek visual pada kartu cerita yang dipilih
-   * @param {string} storyId - ID cerita yang akan di-highlight
-   */
   highlightStory(storyId) {
     document.querySelectorAll(".story-card").forEach((card) => {
       card.classList.remove("active");
@@ -261,17 +236,12 @@ class HomePage {
     this.#selectedStoryId = storyId;
   }
 
-  /**
-   * Mengarahkan pandangan peta ke marker yang sesuai dengan ID cerita
-   * @param {string} storyId - ID cerita target
-   */
   focusMapMarker(storyId) {
     const marker = this.#markers[storyId];
     if (marker) {
       this.#map.setView(marker.getLatLng(), 12);
       marker.openPopup();
 
-      // Memperbarui visual marker aktif
       marker.setIcon(
         L.icon({
           iconUrl:
@@ -285,7 +255,6 @@ class HomePage {
         }),
       );
 
-      // Reset marker lainnya ke status default
       Object.keys(this.#markers).forEach((id) => {
         if (id !== storyId) {
           this.#markers[id].setIcon(
@@ -311,7 +280,6 @@ class HomePage {
   }
 
   hideLoading() {
-    // Dipanggil secara implisit setelah renderStories selesai
   }
 
   showError(message) {
@@ -320,9 +288,6 @@ class HomePage {
     errorDiv.style.display = "block";
   }
 
-  /**
-   * Prosedur pembersihan instance peta saat perpindahan rute
-   */
   onPageLeave() {
     if (this.#map) {
       try {

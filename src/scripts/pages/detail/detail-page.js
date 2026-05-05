@@ -40,7 +40,6 @@ class DetailPage {
   async renderDetail(story) {
     const container = document.querySelector("#detailContent");
     
-    // Cek status favorit dari database
     const favoriteStory = await StoryModel.getFavoriteStory(story.id);
     const isFavorite = !!favoriteStory;
 
@@ -61,7 +60,7 @@ class DetailPage {
           </div>
           <div class="detail-meta">
             <span class="detail-date">📅 ${formatDate(story.createdAt)}</span>
-            <span class="detail-location-text">📍 ${story.lat ? `${story.lat.toFixed(4)}, ${story.lon.toFixed(4)}` : 'Lokasi tidak tersedia'}</span>
+            <span class="detail-location-text">📍 ${story.lat !== null && story.lon !== null ? `${story.lat.toFixed(4)}, ${story.lon.toFixed(4)}` : 'Lokasi tidak tersedia'}</span>
           </div>
         </header>
 
@@ -74,7 +73,7 @@ class DetailPage {
           <p class="detail-description">${story.description}</p>
         </div>
 
-        ${story.lat && story.lon ? `
+        ${story.lat !== null && story.lon !== null ? `
           <div class="detail-map-section">
             <h2 class="section-title">Lokasi di Peta</h2>
             <div id="miniMap" class="mini-map-container"></div>
@@ -83,7 +82,6 @@ class DetailPage {
       </article>
     `;
 
-    // Inisialisasi event listener untuk tombol favorit
     const favoriteBtn = document.querySelector("#favoriteBtnDetail");
     favoriteBtn.addEventListener("click", async () => {
       const isCurrentlyFavorite = favoriteBtn.textContent.trim() === "❤️";

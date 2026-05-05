@@ -1,9 +1,5 @@
 import Auth from "./auth-api";
 
-/**
- * AuthModel menangani logika bisnis terkait otentikasi.
- * Bertanggung jawab untuk komunikasi dengan API dan pengelolaan token lokal.
- */
 class AuthModel {
   static async login(email, password) {
     const loginResult = await Auth.login(email, password);

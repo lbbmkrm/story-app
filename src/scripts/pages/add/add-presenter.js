@@ -19,7 +19,6 @@ class AddPresenter {
         window.location.hash = "#/";
       }, 2000);
     } catch (error) {
-      // Penanganan khusus untuk mode offline (Kriteria Advanced)
       if (!navigator.onLine) {
         this.#view.showSuccess(
           "Anda sedang offline. Cerita telah disimpan secara lokal dan akan otomatis diunggah saat koneksi internet tersedia."

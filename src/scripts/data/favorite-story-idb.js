@@ -1,5 +1,4 @@
 import { openDB } from "idb";
-import CONFIG from "../config";
 
 const { DATABASE_NAME, DATABASE_VERSION, OBJECT_STORE_NAME } = {
   DATABASE_NAME: "story-app-db",
@@ -32,7 +31,6 @@ const FavoriteStoryIdb = {
     return (await dbPromise).delete(OBJECT_STORE_NAME, id);
   },
 
-  // Fitur Pencarian (Untuk kriteria Skilled)
   async searchStories(query) {
     const allStories = await this.getAllStories();
     return allStories.filter((story) => 

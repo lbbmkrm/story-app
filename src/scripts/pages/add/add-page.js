@@ -42,7 +42,6 @@ export default class AddPage {
                   ></textarea>
                 </div>
   
-                <!-- Media Section (Kamera & Upload) -->
                 <div class="form-group">
                   <label>Foto Cerita</label>
                   <div class="camera-wrapper" role="region" aria-label="Kamera dan Preview Foto">
@@ -62,7 +61,6 @@ export default class AddPage {
                   </div>
                 </div>
   
-                <!-- Map Picker -->
                 <div class="form-group">
                   <label for="mapPickerSearch" id="mapPickerLabel">Lokasi Cerita (Ketuk di Peta)</label>
                   <p id="mapInstruction" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Opsional: Tandai lokasi di mana momen ini terjadi</p>
@@ -106,7 +104,6 @@ export default class AddPage {
     document.querySelector("#captureBtn").addEventListener("click", () => this.#capturePhoto());
     document.querySelector("#retakeBtn").addEventListener("click", () => this.#retakePhoto());
     
-    // Penanganan pemilihan file manual
     const fileInput = document.querySelector("#fileInput");
     const browseBtn = document.querySelector("#browseBtn");
     
@@ -114,9 +111,6 @@ export default class AddPage {
     fileInput.addEventListener("change", (e) => this.#handleFileChange(e));
   }
 
-  /**
-   * Menginisialisasi aliran kamera menggunakan MediaStream API
-   */
   async #initCamera() {
     try {
       this.#stream = await navigator.mediaDevices.getUserMedia({ 
@@ -126,13 +120,9 @@ export default class AddPage {
       video.srcObject = this.#stream;
     } catch (err) {
       console.warn("Camera access failed or denied:", err);
-      // Jika kamera gagal, aplikasi tetap bisa menggunakan upload file
     }
   }
 
-  /**
-   * Menangani pemilihan gambar melalui file browser
-   */
   #handleFileChange(e) {
     const file = e.target.files[0];
     if (file) {
@@ -145,9 +135,6 @@ export default class AddPage {
     }
   }
 
-  /**
-   * Mengambil cuplikan gambar dari video stream (Kamera)
-   */
   #capturePhoto() {
     const video = document.querySelector("#video");
     const canvas = document.querySelector("#canvas");
@@ -157,13 +144,10 @@ export default class AddPage {
     canvas.getContext("2d").drawImage(video, 0, 0);
 
     const imgData = canvas.toDataURL("image/jpeg");
-    this.#selectedFile = null; // Reset file jika mengambil dari kamera
+    this.#selectedFile = null;
     this.#showPreview(imgData);
   }
 
-  /**
-   * Mengaktifkan tampilan preview dan menyembunyikan video
-   */
   #showPreview(src) {
     const video = document.querySelector("#video");
     const photoPreview = document.querySelector("#photoPreview");
@@ -181,9 +165,6 @@ export default class AddPage {
     this.#stopCamera();
   }
 
-  /**
-   * Mengembalikan UI ke mode pengambilan gambar awal
-   */
   #retakePhoto() {
     const video = document.querySelector("#video");
     const photoPreview = document.querySelector("#photoPreview");
@@ -197,7 +178,7 @@ export default class AddPage {
     captureBtn.style.display = "block";
     retakeBtn.style.display = "none";
     browseBtn.style.display = "block";
-    fileInput.value = ""; // Reset input file
+    fileInput.value = ""; 
     this.#selectedFile = null;
 
     this.#initCamera();
@@ -213,7 +194,6 @@ export default class AddPage {
   #initMapPicker() {
     const mapContainer = document.querySelector("#mapPicker");
     
-    // Hapus paksa properti internal Leaflet jika elemen di-reuse
     if (mapContainer && mapContainer._leaflet_id) {
       mapContainer._leaflet_id = null;
     }
@@ -242,10 +222,6 @@ export default class AddPage {
     setTimeout(() => this.#map.invalidateSize(), 100);
   }
 
-  /**
-   * Memproses pengiriman formulir. 
-   * Menggunakan file yang dipilih atau mengonversi canvas kamera ke blob.
-   */
   async #handleSubmit(e) {
     e.preventDefault();
     const description = document.querySelector("#description").value;
@@ -264,12 +240,10 @@ export default class AddPage {
       formData.append("lon", this.#selectedLocation.lng);
     }
 
-    // Jika gambar berasal dari file input
     if (this.#selectedFile) {
       formData.append("photo", this.#selectedFile);
       await this.#presenter.addStory(formData);
     } else {
-      // Jika gambar berasal dari kamera (canvas)
       const canvas = document.querySelector("#canvas");
       canvas.toBlob(async (blob) => {
         formData.append("photo", blob, "camera-photo.jpg");

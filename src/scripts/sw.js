@@ -17,9 +17,6 @@ cleanupOutdatedCaches();
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-// ─── Strategi Caching ────────────────────────────────────────────────────────
-
-// Cache Google Fonts
 registerRoute(
   ({ url }) =>
     url.origin === "https://fonts.googleapis.com" ||
@@ -30,7 +27,6 @@ registerRoute(
   }),
 );
 
-// Cache Leaflet
 registerRoute(
   ({ url }) => url.origin === "https://unpkg.com",
   new CacheFirst({
@@ -39,7 +35,6 @@ registerRoute(
   }),
 );
 
-// Cache tile peta OpenStreetMap
 registerRoute(
   ({ url }) => url.hostname.includes("tile.openstreetmap.org"),
   new CacheFirst({
@@ -54,8 +49,6 @@ registerRoute(
   }),
 );
 
-// Cache data API stories — NetworkFirst agar selalu fresh saat online,
-// fallback ke cache saat offline
 registerRoute(
   ({ url }) => url.origin === "https://story-api.dicoding.dev",
   new NetworkFirst({
@@ -67,7 +60,6 @@ registerRoute(
   }),
 );
 
-// Cache Gambar Cerita (Foto dari API)
 registerRoute(
   ({ request }) => request.destination === "image",
   new CacheFirst({
@@ -76,26 +68,26 @@ registerRoute(
       new CacheableResponsePlugin({ statuses: [0, 200] }),
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Hari
+        maxAgeSeconds: 60 * 60 * 24 * 30,
       }),
     ],
   }),
 );
 
-// Penanganan Background Sync untuk Unggah Cerita (Kriteria Advanced)
 const bgSyncPlugin = new BackgroundSyncPlugin("story-queue", {
-  maxRetentionTime: 24 * 60, // Coba kirim ulang selama 24 jam
+  maxRetentionTime: 24 * 60,
 });
 
 registerRoute(
-  ({ url }) => url.origin === "https://story-api.dicoding.dev" && url.pathname.endsWith("/stories"),
+  ({ url }) =>
+    url.origin === "https://story-api.dicoding.dev" &&
+    url.pathname.endsWith("/stories"),
   new NetworkFirst({
     plugins: [bgSyncPlugin],
   }),
   "POST",
 );
 
-// Menangani event push dari server untuk menampilkan notifikasi
 self.addEventListener("push", (event) => {
   if (!event.data) return;
 
@@ -106,16 +98,15 @@ self.addEventListener("push", (event) => {
     data = { title: "Story App", body: event.data.text() };
   }
 
-  // Mendukung berbagai format payload notifikasi dari API
   const title = data.title || data.notification?.title || "Cerita Baru!";
-  const body = 
-    data.options?.body || 
-    data.body || 
-    data.notification?.body || 
-    data.message || 
+  const body =
+    data.options?.body ||
+    data.body ||
+    data.notification?.body ||
+    data.message ||
     "Seseorang baru saja membagikan momen baru.";
   const icon = data.icon || data.notification?.icon || "/images/logo.png";
-  
+
   const options = {
     body: body,
     icon: icon,

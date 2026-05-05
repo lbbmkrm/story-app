@@ -19,7 +19,6 @@ class DetailPresenter {
         return;
       }
 
-      // Ambil ID dari URL saat ini
       const { id } = parseActivePathname();
       this.#storyId = id;
 
@@ -29,10 +28,9 @@ class DetailPresenter {
 
       this.#view.showLoading();
       const story = await this.#model.getStoryDetail(this.#storyId);
-      this.#view.renderDetail(story);
+      await this.#view.renderDetail(story);
       
-      // Jika cerita punya koordinat, inisialisasi mini map
-      if (story.lat && story.lon) {
+      if (story.lat !== null && story.lon !== null) {
         this.#view.initializeMiniMap(story.lat, story.lon, story.name);
       }
     } catch (error) {

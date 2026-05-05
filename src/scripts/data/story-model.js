@@ -1,10 +1,6 @@
 import StoryApi from "./story-api";
 import FavoriteStoryIdb from "./favorite-story-idb";
 
-/**
- * StoryModel menangani logika bisnis terkait pengelolaan cerita.
- * Bertanggung jawab untuk pengambilan dan pengiriman data cerita ke API serta IndexedDB.
- */
 class StoryModel {
   static async getAllStories() {
     return await StoryApi.getAllStories();
@@ -17,8 +13,6 @@ class StoryModel {
   static async getStoryDetail(id) {
     return await StoryApi.getStoryDetail(id);
   }
-
-  // ─── Metode IndexedDB (Favorit) ─────────────────────────────────────────────
 
   static async getAllFavoriteStories() {
     return await FavoriteStoryIdb.getAllStories();
