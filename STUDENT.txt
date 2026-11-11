@@ -1,3 +1,3 @@
 
-APP_URL=<url_aplikasi>
+APP_URL=https://story-app-pwa.netlify.app
 MAP_SERVICE_API_KEY=<api_key>
